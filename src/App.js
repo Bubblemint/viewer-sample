@@ -11,9 +11,13 @@ export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            proxyUrl :"http://127.0.0.1:8080/",
             inputQuery: "",
             searchQuery: "",
-            result: []
+            frontUrlL: "",
+            frontUrlR: "",
+            resultL: [],
+            resultR: [],
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -29,13 +33,12 @@ export default class App extends React.Component {
     }
 
     handleClick = (e) => {
-        this.fetchResult('url', this.state.inputQuery);
-
+        this.fetchResult(this.state.frontUrlL+this.state.inputQuery, "resultL");
+        this.fetchResult(this.state.frontUrlR+this.state.inputQuery, "resultR");
         this.setState({
             searchQuery: this.state.inputQuery,
             inputQuery: ""
         })
-
     }
 
     handleKeyPress = (e) => {
@@ -44,13 +47,12 @@ export default class App extends React.Component {
         }
     }
 
-    fetchResult = async (url, query) => {
-        console.log("https://jsonplaceholder.typicode.com/posts/" + query);
-        let { data: result } = await axios.get("https://jsonplaceholder.typicode.com/posts/");
-
+    fetchResult = async (url, stateName) => {
+        let frontUrl = this.state.proxyUrl + url
+        let { data: result } = await axios.get(frontUrl);
         this.setState({
-            result: result
-        })
+            [stateName]: result,
+        });
     }
 
     render() {
@@ -69,29 +71,29 @@ export default class App extends React.Component {
                     </div>
                     </section>
 
-                    <section className="content">
-                        <div className="row">
-                            <Result
-                                query={this.state.searchQuery}
-                                result={this.state.result}
-                            />
+                        <section className="content">
+                            <div className="row">
+                                <Result
+                                    query={this.state.searchQuery}
+                                    result={this.state.resultL}
+                                />
 
-                            <Result
-                                query={this.state.searchQuery}
-                                result={this.state.result}
-                            />
-                        </div>
+                                <Result
+                                    query={this.state.searchQuery}
+                                    result={this.state.resultR}
+                                />
+                            </div>
 
-                    </section>
-                    </div>
+                        </section>
+                </div>
 
-                    <footer className="main-footer">
-                        <div className="pull-right hidden-xs">
-                            <b>Version</b>"0.0.1"
-                        </div>
-                        <strong>Copyright © 2019 <a href="http://daum.net">Lynn</a>.</strong>
-                        &nbsp;
-                        All rights reserved.
+        <footer className="main-footer">
+            <div className="pull-right hidden-xs">
+                <b>Version</b>"0.0.1"
+            </div>
+            <strong>Copyright © 2019 <a href="http://www.naver.com">Lex</a>.</strong>
+            &nbsp;
+            All rights reserved.
                     </footer>
                 </div>
         );
